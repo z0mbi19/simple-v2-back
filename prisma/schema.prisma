@@ -1,0 +1,88 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Colaborador {
+  id         Int       @id @default(autoincrement())
+  ctps       Int       @unique
+  pis        Int       @unique
+  adm        Boolean   @default(false)
+  user       User?
+  dentistaId Int?      @unique
+  dentista   Dentista? @relation(fields: [dentistaId], references: [id])
+}
+
+model Dentista {
+  id            Int          @id @default(autoincrement())
+  cro           Int          @unique
+  especialidade String
+  consulta      Consulta[]
+  colaborador   Colaborador?
+}
+
+model User {
+  id            Int          @id @default(autoincrement())
+  email         String       @unique
+  senha         String
+  nome          String
+  cpf           Int          @unique
+  nascimento    DateTime
+  ativo         Boolean      @default(true)
+  sexo          Boolean
+  endereco      String
+  cep           Int
+  cidade        String
+  uf            String
+  telefone      Int          @unique
+  colaboradorId Int?         @unique
+  colaborador   Colaborador? @relation(fields: [colaboradorId], references: [id])
+  consulta      Consulta[]
+  createdAt     DateTime     @default(now())
+}
+
+model Servico {
+  id       Int        @id @default(autoincrement())
+  nome     String     @unique
+  valor    Float
+  consulta Consulta[]
+}
+
+model Material {
+  id         Int        @id @default(autoincrement())
+  nome       String     @unique
+  quantidade Int
+  valorUni   Float
+  valorTotal Float
+  descricao  String
+  consulta   Consulta[]
+}
+
+model Consulta {
+  id            Int        @id @default(autoincrement())
+  consulta      DateTime
+  plano         String?
+  validadePlano DateTime?
+  material      Material[]
+  servico       Servico[]
+  userId        Int
+  user          User       @relation(fields: [userId], references: [id])
+  croID         Int
+  dentista      Dentista   @relation(fields: [croID], references: [cro])
+}
+
+model Financeiro {
+  id        Int      @id @default(autoincrement())
+  data      DateTime
+  tipo      String
+  descricao String
+  valor     Float
+  materia   Boolean
+}
