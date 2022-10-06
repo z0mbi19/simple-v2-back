@@ -14,20 +14,14 @@ export async function userMiddleware(
       .required("Email e obrigatório"),
     nome: yup.string().required("Nome e obrigatório"),
     senha: yup.string().required("Senha e obrigatório"),
-    cpf: yup.number().required("CPF e obrigatório"),
+    cpf: yup.string().required("CPF e obrigatório"),
     nascimento: yup.date().required("Data de nascimento e obrigatório"),
     sexo: yup.boolean().required("Sexo e obrigatório"),
     endereco: yup.string().required("Endereço e obrigatório"),
-    cep: yup
-      .number()
-      .typeError("O cep tem que ser numeros")
-      .required("CEP e obrigatório"),
+    cep: yup.string().required("CEP e obrigatório"),
     cidade: yup.string().required("Cidade e obrigatório"),
     uf: yup.string().required("UF e obrigatório"),
-    telefone: yup
-      .number()
-      .typeError("O telefone tem que ser numeros")
-      .required("Telefone e obrigatório"),
+    telefone: yup.string().required("Telefone e obrigatório"),
   });
 
   let schemaColab = yup.object().shape({
@@ -37,20 +31,14 @@ export async function userMiddleware(
       .required("Email e obrigatório"),
     nome: yup.string().required("Nome e obrigatório"),
     senha: yup.string().required("Senha e obrigatório"),
-    cpf: yup.number().required("CPF e obrigatório"),
+    cpf: yup.string().required("CPF e obrigatório"),
     nascimento: yup.date().required("Data de nascimento e obrigatório"),
     sexo: yup.boolean().required("Sexo e obrigatório"),
     endereco: yup.string().required("Endereço e obrigatório"),
-    cep: yup
-      .number()
-      .typeError("O cep tem que ser numeros")
-      .required("CEP e obrigatório"),
+    cep: yup.string().required("CEP e obrigatório"),
     cidade: yup.string().required("Cidade e obrigatório"),
     uf: yup.string().required("UF e obrigatório"),
-    telefone: yup
-      .number()
-      .typeError("O telefone tem que ser numeros")
-      .required("Telefone e obrigatório"),
+    telefone: yup.string().required("Telefone e obrigatório"),
     ctps: yup
       .number()
       .typeError("O CTPS tem que ser numeros")
@@ -68,20 +56,14 @@ export async function userMiddleware(
       .required("Email e obrigatório"),
     nome: yup.string().required("Nome e obrigatório"),
     senha: yup.string().required("Senha e obrigatório"),
-    cpf: yup.number().required("CPF e obrigatório"),
+    cpf: yup.string().required("CPF e obrigatório"),
     nascimento: yup.date().required("Data de nascimento e obrigatório"),
     sexo: yup.boolean().required("Sexo e obrigatório"),
     endereco: yup.string().required("Endereço e obrigatório"),
-    cep: yup
-      .number()
-      .typeError("O cep tem que ser numeros")
-      .required("CEP e obrigatório"),
+    cep: yup.string().required("CEP e obrigatório"),
     cidade: yup.string().required("Cidade e obrigatório"),
     uf: yup.string().required("UF e obrigatório"),
-    telefone: yup
-      .number()
-      .typeError("O telefone tem que ser numeros")
-      .required("Telefone e obrigatório"),
+    telefone: yup.string().required("Telefone e obrigatório"),
     ctps: yup
       .number()
       .typeError("O CTPS tem que ser numeros")

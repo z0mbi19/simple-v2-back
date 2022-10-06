@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 
 export async function getAllMaterial(req: Request, res: Response) {
   const result = await prisma.material.findMany();
-  return res.json(result);
+  return res.status(200).set("Content-Range", `posts 0-1/1`).json(result);
 }
 
 export async function indexMaterial(req: Request, res: Response) {

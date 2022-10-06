@@ -6,6 +6,11 @@ const prisma = new PrismaClient();
 
 export async function indexAllUser(req: Request, res: Response) {
   const user = await prisma.user.findMany({
+    where: {
+      NOT: {
+        colaboradorId: null,
+      },
+    },
     include: {
       colaborador: {
         include: {
@@ -19,9 +24,19 @@ export async function indexAllUser(req: Request, res: Response) {
 }
 
 export async function indexUser(req: Request, res: Response) {
+  if (!parseInt(req.params.id)) {
+    return;
+  }
   const user = await prisma.user.findFirst({
     where: {
       id: parseInt(req.params.id),
+    },
+    include: {
+      colaborador: {
+        include: {
+          dentista: true,
+        },
+      },
     },
   });
 
@@ -261,6 +276,7 @@ export async function updateUser(req: Request, res: Response) {
   }
 
   let user: Prisma.UserCreateInput;
+  console.log(ctps);
   let colab: Prisma.ColaboradorCreateInput = {
     ctps,
     pis,

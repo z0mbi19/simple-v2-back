@@ -5,7 +5,10 @@ const prisma = new PrismaClient();
 
 export async function getAllServico(req: Request, res: Response) {
   const result = await prisma.servico.findMany();
-  return res.json(result);
+  return res
+    .status(200)
+    .set("Content-Range", `posts 0-${result.length}/${result.length}`)
+    .json(result);
 }
 
 export async function indexServico(req: Request, res: Response) {
@@ -18,7 +21,7 @@ export async function indexServico(req: Request, res: Response) {
 }
 
 export async function storeServico(req: Request, res: Response) {
-  const { nome } = req.body;
+  const { nome, valor } = req.body;
 
   const servicoExist = await prisma.servico.findFirst({
     where: {
@@ -30,15 +33,15 @@ export async function storeServico(req: Request, res: Response) {
     return res.status(500).send("Serviço já cadastrado");
   }
 
-  await prisma.servico.create({
-    data: { ...req.body },
+  const result = await prisma.servico.create({
+    data: { nome, valor: parseFloat(valor) },
   });
 
-  return res.status(200).send("ok");
+  return res.json(result);
 }
 
 export async function updateServico(req: Request, res: Response) {
-  const { nome } = req.body;
+  const { nome, valor } = req.body;
 
   const servicoExist = await prisma.servico.findFirst({
     where: {
@@ -55,7 +58,7 @@ export async function updateServico(req: Request, res: Response) {
     where: {
       id: parseInt(req.params.id),
     },
-    data: { ...req.body },
+    data: { nome, valor: parseFloat(valor) },
   });
 
   return res.status(200).send("ok");

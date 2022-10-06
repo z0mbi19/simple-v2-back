@@ -33,6 +33,13 @@ import {
   servicoMiddleware,
   userMiddleware,
 } from "./middlewares/yupMiddlewares";
+import cors from "cors";
+import {
+  getAllPaciente,
+  getPaciente,
+  storePaciente,
+  updatePaciente,
+} from "./controller/PacienteController";
 
 const router = Router();
 
@@ -44,6 +51,13 @@ router.put("/user/:id", userMiddleware, updateUser);
 router.delete("/user/:id", desactiveUser);
 router.get("/user/", indexAllUser);
 router.get("/user/:id", indexUser);
+
+//Paciente
+router.get("/paciente/", getAllPaciente);
+router.get("/paciente/:id", getPaciente);
+router.put("/paciente/:id", userMiddleware, updatePaciente);
+router.post("/paciente/", userMiddleware, storePaciente);
+router.delete("/paciente/:id", desactiveUser);
 
 //Serviço
 router.get("/servico/", getAllServico);

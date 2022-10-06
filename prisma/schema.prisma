@@ -33,15 +33,15 @@ model User {
   email         String       @unique
   senha         String
   nome          String
-  cpf           Int          @unique
+  cpf           String       @unique
   nascimento    DateTime
   ativo         Boolean      @default(true)
   sexo          Boolean
   endereco      String
-  cep           Int
+  cep           String
   cidade        String
   uf            String
-  telefone      Int          @unique
+  telefone      String       @unique
   colaboradorId Int?         @unique
   colaborador   Colaborador? @relation(fields: [colaboradorId], references: [id])
   consulta      Consulta[]

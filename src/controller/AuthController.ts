@@ -12,6 +12,13 @@ export async function authenticate(req: Request, res: Response) {
       ativo: true,
       email: req.body.email,
     },
+    include: {
+      colaborador: {
+        include: {
+          dentista: true,
+        },
+      },
+    },
   });
   if (!result) {
     return res.status(401).send("Usuario ou senha invalido 😶");
@@ -29,7 +36,11 @@ export async function authenticate(req: Request, res: Response) {
     { expiresIn: "1d" }
   );
 
-  return res.json({ jwt: token, id: result.id });
+  return res.json({
+    jwt: token,
+    id: result.id,
+    colaborador: result.colaborador,
+  });
 }
 
 export async function get(req: Request, res: Response) {
