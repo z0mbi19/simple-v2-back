@@ -5,6 +5,22 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 export async function indexAllUser(req: Request, res: Response) {
+  const admUser = await prisma.user.findFirst({
+    where: {
+      id: parseInt(req.userId),
+    },
+    include: {
+      colaborador: true,
+    },
+  });
+
+  if (!admUser?.colaborador?.adm) {
+    return res
+      .status(500)
+      .send(
+        "Você não tem permissão para isso fale com algum administrador do sistema "
+      );
+  }
   const user = await prisma.user.findMany({
     where: {
       NOT: {
@@ -23,7 +39,40 @@ export async function indexAllUser(req: Request, res: Response) {
   return res.json(user);
 }
 
+export async function userNow(req: Request, res: Response) {
+  const user = await prisma.user.findFirst({
+    where: {
+      id: parseInt(req.userId),
+    },
+    include: {
+      colaborador: {
+        include: {
+          dentista: true,
+        },
+      },
+    },
+  });
+
+  return res.json(user);
+}
+
 export async function indexUser(req: Request, res: Response) {
+  const admUser = await prisma.user.findFirst({
+    where: {
+      id: parseInt(req.userId),
+    },
+    include: {
+      colaborador: true,
+    },
+  });
+
+  if (!admUser?.colaborador?.adm) {
+    return res
+      .status(500)
+      .send(
+        "Você não tem permissão para isso fale com algum administrador do sistema "
+      );
+  }
   if (!parseInt(req.params.id)) {
     return;
   }
@@ -44,6 +93,23 @@ export async function indexUser(req: Request, res: Response) {
 }
 
 export async function storeUser(req: Request, res: Response) {
+  // const admUser = await prisma.user.findFirst({
+  //   where: {
+  //     id: parseInt(req.userId),
+  //   },
+  //   include: {
+  //     colaborador: true,
+  //   },
+  // });
+
+  // if (!admUser?.colaborador?.adm) {
+  //   return res
+  //     .status(500)
+  //     .send(
+  //       "Você não tem permissão para isso fale com algum administrador do sistema "
+  //     );
+  // }
+
   const {
     email,
     nome,
@@ -190,6 +256,22 @@ export async function storeUser(req: Request, res: Response) {
 }
 
 export async function updateUser(req: Request, res: Response) {
+  const admUser = await prisma.user.findFirst({
+    where: {
+      id: parseInt(req.userId),
+    },
+    include: {
+      colaborador: true,
+    },
+  });
+
+  if (!admUser?.colaborador?.adm) {
+    return res
+      .status(500)
+      .send(
+        "Você não tem permissão para isso fale com algum administrador do sistema "
+      );
+  }
   const {
     email,
     nome,
@@ -346,6 +428,22 @@ export async function updateUser(req: Request, res: Response) {
 }
 
 export async function desactiveUser(req: Request, res: Response) {
+  const admUser = await prisma.user.findFirst({
+    where: {
+      id: parseInt(req.userId),
+    },
+    include: {
+      colaborador: true,
+    },
+  });
+
+  if (!admUser?.colaborador?.adm) {
+    return res
+      .status(500)
+      .send(
+        "Você não tem permissão para isso fale com algum administrador do sistema "
+      );
+  }
   const userExist = await prisma.user.findFirst({
     where: {
       id: parseInt(req.params.id),

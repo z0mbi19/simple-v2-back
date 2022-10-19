@@ -5,6 +5,7 @@
     "outDir": "dist",
 
     "strict": true,
+    "typeRoots": ["./node_module/@types", "./src/types"],
 
     "lib": ["esnext"],
 

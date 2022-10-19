@@ -7,7 +7,8 @@
   "author": "z0mbi19 <32523746+z0mbi19@users.noreply.github.com>",
   "license": "MIT",
   "scripts": {
-    "start": "npx nodemon src/index.ts"
+    "dev": "npx nodemon --files src/index.ts",
+    "start": "ts-node --files src/index.ts"
   },
   "dependencies": {
     "@prisma/client": "^4.3.1",

@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { authenticate } from "./controller/AuthController";
 import {
+  deleteConsulta,
   getAllConsulta,
   getConsulta,
+  getDadosForm,
   storeConsulta,
   updateConsulta,
 } from "./controller/ConsultaController";
@@ -26,6 +28,7 @@ import {
   indexUser,
   storeUser,
   updateUser,
+  userNow,
 } from "./controller/UserControler";
 import {
   consultaMiddleware,
@@ -40,53 +43,79 @@ import {
   storePaciente,
   updatePaciente,
 } from "./controller/PacienteController";
+import {
+  authMiddleware,
+  colaboradorVerify,
+} from "./middlewares/authMiddlewares";
 
 const router = Router();
 
 router.post("/auth", authenticate);
 
 //Use
-router.post("/user", userMiddleware, storeUser);
-router.put("/user/:id", userMiddleware, updateUser);
-router.delete("/user/:id", desactiveUser);
-router.get("/user/", indexAllUser);
-router.get("/user/:id", indexUser);
+router.post("/user", authMiddleware, userMiddleware, storeUser);
+router.put("/user/:id", authMiddleware, userMiddleware, updateUser);
+router.delete("/user/:id", authMiddleware, desactiveUser);
+router.get("/user/", authMiddleware, indexAllUser);
+router.get("/usernow/", authMiddleware, userNow);
+router.get("/user/:id", authMiddleware, indexUser);
 
 //Paciente
-router.get("/paciente/", getAllPaciente);
-router.get("/paciente/:id", getPaciente);
-router.put("/paciente/:id", userMiddleware, updatePaciente);
-router.post("/paciente/", userMiddleware, storePaciente);
-router.delete("/paciente/:id", desactiveUser);
+router.get("/paciente/", authMiddleware, colaboradorVerify, getAllPaciente);
+router.get("/paciente/:id", authMiddleware, colaboradorVerify, getPaciente);
+router.put(
+  "/paciente/:id",
+  authMiddleware,
+  colaboradorVerify,
+  userMiddleware,
+  updatePaciente
+);
+router.post(
+  "/paciente/",
+  authMiddleware,
+  colaboradorVerify,
+  userMiddleware,
+  storePaciente
+);
+router.delete(
+  "/paciente/:id",
+  authMiddleware,
+  colaboradorVerify,
+  desactiveUser
+);
 
 //Serviço
-router.get("/servico/", getAllServico);
-router.get("/servico/:id", indexServico);
-router.post("/servico", servicoMiddleware, storeServico);
-router.put("/servico/:id", servicoMiddleware, updateServico);
-router.delete("/servico/:id", excludServico);
+router.get("/servico/", authMiddleware, colaboradorVerify, getAllServico);
+router.get("/servico/:id", authMiddleware, colaboradorVerify, indexServico);
+router.post(
+  "/servico",
+  authMiddleware,
+  colaboradorVerify,
+  servicoMiddleware,
+  storeServico
+);
+router.put(
+  "/servico/:id",
+  authMiddleware,
+  colaboradorVerify,
+  servicoMiddleware,
+  updateServico
+);
+router.delete("/servico/:id", authMiddleware, colaboradorVerify, excludServico);
 
 //Material
-router.get("/material/", getAllMaterial);
-router.get("/material/:id", indexMaterial);
-router.post("/material", materialMiddleware, storeMaterial);
-router.put("/material/:id", materialMiddleware, updateMaterial);
-router.delete("/material/:id", excludMaterial);
+router.get("/material/", authMiddleware, getAllMaterial);
+router.get("/material/:id", authMiddleware, indexMaterial);
+router.post("/material", authMiddleware, materialMiddleware, storeMaterial);
+router.put("/material/:id", authMiddleware, materialMiddleware, updateMaterial);
+router.delete("/material/:id", authMiddleware, excludMaterial);
 
 //Consulta
-router.get("/consulta/", getAllConsulta);
-router.get("/consulta/:id", getConsulta);
-router.post("/consulta", consultaMiddleware, storeConsulta);
-router.put("/consulta/:id", consultaMiddleware, updateConsulta);
-
-// //Colaborador
-// router.get("/dentista", authMiddleware, dentista);
-// router.get("/colaborador", authMiddleware, allColaborador);
-// router.get("/colaborador/id/:id", authMiddleware, idColaborador);
-// router.get("/colaborador/nome", authMiddleware, nomeColaborador);
-// router.get("/colaborador/cpf", authMiddleware, cpfColaborador);
-// router.post("/colaborador", authMiddleware, storeColaborador);
-// router.put("/colaborador/:id", authMiddleware, updateColaborador);
-// router.delete("/colaborador/:id", authMiddleware, deleteColaborador);
+router.get("/consulta/", authMiddleware, getAllConsulta);
+router.get("/consulta/:id", authMiddleware, getConsulta);
+router.delete("/consulta/:id", deleteConsulta);
+router.post("/consulta", authMiddleware, consultaMiddleware, storeConsulta);
+router.put("/consulta/:id", authMiddleware, consultaMiddleware, updateConsulta);
+router.get("/formconsulta/", authMiddleware, getDadosForm);
 
 export default router;
