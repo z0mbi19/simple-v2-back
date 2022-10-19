@@ -56,6 +56,161 @@ export async function userNow(req: Request, res: Response) {
   return res.json(user);
 }
 
+export async function userNowEdit(req: Request, res: Response) {
+  const {
+    email,
+    nome,
+    senha,
+    cpf,
+    nascimento,
+    sexo,
+    endereco,
+    cep,
+    cidade,
+    uf,
+    telefone,
+    ctps,
+    pis,
+    adm,
+    cro,
+    especialidade,
+  } = req.body;
+
+  const emailExist = await prisma.user.findFirst({
+    where: {
+      NOT: { id: parseInt(req.userId) },
+      email,
+    },
+  });
+  const cpfExist = await prisma.user.findFirst({
+    where: {
+      NOT: { id: parseInt(req.userId) },
+      cpf,
+    },
+  });
+
+  const telefoneExist = await prisma.user.findFirst({
+    where: {
+      NOT: { id: parseInt(req.userId) },
+      telefone,
+    },
+  });
+
+  if (emailExist) {
+    return res.status(500).send("Email já cadastrado");
+  }
+  if (cpfExist) {
+    return res.status(500).send("CPF já cadastrado");
+  }
+  if (telefoneExist) {
+    return res.status(500).send("Telefone já cadastrado");
+  }
+
+  if (pis) {
+    const pisExist = await prisma.colaborador.findFirst({
+      where: {
+        NOT: { id: parseInt(req.userId) },
+        pis,
+      },
+    });
+    if (pisExist) {
+      return res.status(500).send("Pis já cadastrado");
+    }
+  }
+
+  if (ctps) {
+    const ctpsExist = await prisma.colaborador.findFirst({
+      where: {
+        NOT: { id: parseInt(req.userId) },
+        ctps,
+      },
+    });
+    if (ctpsExist) {
+      return res.status(500).send("ctps já cadastrado");
+    }
+  }
+
+  if (cro) {
+    const croExist = await prisma.dentista.findFirst({
+      where: {
+        NOT: { id: parseInt(req.userId) },
+        cro,
+      },
+    });
+    if (croExist) {
+      return res.status(500).send("cro já cadastrado");
+    }
+  }
+
+  let user: Prisma.UserCreateInput;
+  let colab: Prisma.ColaboradorCreateInput = {
+    ctps,
+    pis,
+    adm,
+  };
+  let dent: Prisma.DentistaCreateInput = {
+    cro,
+    especialidade,
+  };
+
+  if (ctps && !cro) {
+    user = {
+      email,
+      nome,
+      senha: bcrypt.hashSync(senha, 8),
+      cpf,
+      nascimento: new Date(nascimento).toISOString(),
+      sexo,
+      endereco,
+      cep,
+      cidade,
+      uf,
+      telefone,
+      colaborador: {
+        create: colab,
+      },
+    };
+  } else if (ctps && cro) {
+    user = {
+      email,
+      nome,
+      senha: bcrypt.hashSync(senha, 8),
+      cpf,
+      nascimento: new Date(nascimento).toISOString(),
+      sexo,
+      endereco,
+      cep,
+      cidade,
+      uf,
+      telefone,
+      colaborador: {
+        create: { ...colab, dentista: { create: dent } },
+      },
+    };
+  } else {
+    user = {
+      email,
+      nome,
+      senha: bcrypt.hashSync(senha, 8),
+      cpf,
+      nascimento: new Date(nascimento).toISOString(),
+      sexo,
+      endereco,
+      cep,
+      cidade,
+      uf,
+      telefone,
+    };
+  }
+
+  await prisma.user.update({
+    where: { id: parseInt(req.userId) },
+    data: user,
+  });
+
+  return res.status(200).send("ok");
+}
+
 export async function indexUser(req: Request, res: Response) {
   const admUser = await prisma.user.findFirst({
     where: {
@@ -93,22 +248,22 @@ export async function indexUser(req: Request, res: Response) {
 }
 
 export async function storeUser(req: Request, res: Response) {
-  // const admUser = await prisma.user.findFirst({
-  //   where: {
-  //     id: parseInt(req.userId),
-  //   },
-  //   include: {
-  //     colaborador: true,
-  //   },
-  // });
+  const admUser = await prisma.user.findFirst({
+    where: {
+      id: parseInt(req.userId),
+    },
+    include: {
+      colaborador: true,
+    },
+  });
 
-  // if (!admUser?.colaborador?.adm) {
-  //   return res
-  //     .status(500)
-  //     .send(
-  //       "Você não tem permissão para isso fale com algum administrador do sistema "
-  //     );
-  // }
+  if (!admUser?.colaborador?.adm) {
+    return res
+      .status(500)
+      .send(
+        "Você não tem permissão para isso fale com algum administrador do sistema "
+      );
+  }
 
   const {
     email,

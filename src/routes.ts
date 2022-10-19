@@ -29,6 +29,7 @@ import {
   storeUser,
   updateUser,
   userNow,
+  userNowEdit,
 } from "./controller/UserControler";
 import {
   consultaMiddleware,
@@ -58,6 +59,7 @@ router.put("/user/:id", authMiddleware, userMiddleware, updateUser);
 router.delete("/user/:id", authMiddleware, desactiveUser);
 router.get("/user/", authMiddleware, indexAllUser);
 router.get("/usernow/", authMiddleware, userNow);
+router.put("/usernow/", authMiddleware, userNowEdit);
 router.get("/user/:id", authMiddleware, indexUser);
 
 //Paciente
