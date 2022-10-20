@@ -72,13 +72,7 @@ router.put(
   userMiddleware,
   updatePaciente
 );
-router.post(
-  "/paciente/",
-  authMiddleware,
-  colaboradorVerify,
-  userMiddleware,
-  storePaciente
-);
+router.post("/paciente/", userMiddleware, storePaciente);
 router.delete(
   "/paciente/:id",
   authMiddleware,

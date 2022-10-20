@@ -40,6 +40,9 @@ export async function colaboradorVerify(
   res: Response,
   next: NextFunction
 ) {
+  if (!req.userId) {
+    return res.status(500).send("Você não esta logado");
+  }
   const admUser = await prisma.user.findFirst({
     where: {
       id: parseInt(req.userId),

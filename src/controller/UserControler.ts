@@ -142,13 +142,13 @@ export async function userNowEdit(req: Request, res: Response) {
     }
   }
 
-  let user: Prisma.UserCreateInput;
-  let colab: Prisma.ColaboradorCreateInput = {
+  let user: Prisma.UserUpdateInput;
+  let colab: Prisma.ColaboradorUpdateInput = {
     ctps,
     pis,
     adm,
   };
-  let dent: Prisma.DentistaCreateInput = {
+  let dent: Prisma.DentistaUpdateInput = {
     cro,
     especialidade,
   };
@@ -157,8 +157,6 @@ export async function userNowEdit(req: Request, res: Response) {
     user = {
       email,
       nome,
-      senha: bcrypt.hashSync(senha, 8),
-      cpf,
       nascimento: new Date(nascimento).toISOString(),
       sexo,
       endereco,
@@ -167,15 +165,13 @@ export async function userNowEdit(req: Request, res: Response) {
       uf,
       telefone,
       colaborador: {
-        create: colab,
+        update: colab,
       },
     };
   } else if (ctps && cro) {
     user = {
       email,
       nome,
-      senha: bcrypt.hashSync(senha, 8),
-      cpf,
       nascimento: new Date(nascimento).toISOString(),
       sexo,
       endereco,
@@ -184,15 +180,13 @@ export async function userNowEdit(req: Request, res: Response) {
       uf,
       telefone,
       colaborador: {
-        create: { ...colab, dentista: { create: dent } },
+        update: { ...colab, dentista: { update: dent } },
       },
     };
   } else {
     user = {
       email,
       nome,
-      senha: bcrypt.hashSync(senha, 8),
-      cpf,
       nascimento: new Date(nascimento).toISOString(),
       sexo,
       endereco,
@@ -446,6 +440,17 @@ export async function updateUser(req: Request, res: Response) {
     especialidade,
   } = req.body;
 
+  const userEdit = await prisma.user.findFirst({
+    where: { id: parseInt(req.params.id) },
+    include: {
+      colaborador: {
+        include: {
+          dentista: true,
+        },
+      },
+    },
+  });
+
   const emailExist = await prisma.user.findFirst({
     where: {
       NOT: { id: parseInt(req.params.id) },
@@ -479,10 +484,11 @@ export async function updateUser(req: Request, res: Response) {
   if (pis) {
     const pisExist = await prisma.colaborador.findFirst({
       where: {
-        NOT: { id: parseInt(req.params.id) },
+        NOT: { pis: userEdit?.colaborador?.pis },
         pis,
       },
     });
+    console.log({ pis, test: pisExist?.pis });
     if (pisExist) {
       return res.status(500).send("Pis já cadastrado");
     }
@@ -491,7 +497,7 @@ export async function updateUser(req: Request, res: Response) {
   if (ctps) {
     const ctpsExist = await prisma.colaborador.findFirst({
       where: {
-        NOT: { id: parseInt(req.params.id) },
+        NOT: { ctps: userEdit?.colaborador?.ctps },
         ctps,
       },
     });
@@ -503,7 +509,7 @@ export async function updateUser(req: Request, res: Response) {
   if (cro) {
     const croExist = await prisma.dentista.findFirst({
       where: {
-        NOT: { id: parseInt(req.params.id) },
+        NOT: { cro: userEdit?.colaborador?.dentista?.cro },
         cro,
       },
     });
@@ -512,14 +518,14 @@ export async function updateUser(req: Request, res: Response) {
     }
   }
 
-  let user: Prisma.UserCreateInput;
+  let user: Prisma.UserUpdateInput;
   console.log(ctps);
-  let colab: Prisma.ColaboradorCreateInput = {
+  let colab: Prisma.ColaboradorUpdateInput = {
     ctps,
     pis,
     adm,
   };
-  let dent: Prisma.DentistaCreateInput = {
+  let dent: Prisma.DentistaUpdateInput = {
     cro,
     especialidade,
   };
@@ -528,7 +534,7 @@ export async function updateUser(req: Request, res: Response) {
     user = {
       email,
       nome,
-      senha: bcrypt.hashSync(senha, 8),
+
       cpf,
       nascimento: new Date(nascimento).toISOString(),
       sexo,
@@ -538,14 +544,14 @@ export async function updateUser(req: Request, res: Response) {
       uf,
       telefone,
       colaborador: {
-        create: colab,
+        update: colab,
       },
     };
   } else if (ctps && cro) {
     user = {
       email,
       nome,
-      senha: bcrypt.hashSync(senha, 8),
+
       cpf,
       nascimento: new Date(nascimento).toISOString(),
       sexo,
@@ -555,14 +561,14 @@ export async function updateUser(req: Request, res: Response) {
       uf,
       telefone,
       colaborador: {
-        create: { ...colab, dentista: { create: dent } },
+        update: { ...colab, dentista: { update: dent } },
       },
     };
   } else {
     user = {
       email,
       nome,
-      senha: bcrypt.hashSync(senha, 8),
+
       cpf,
       nascimento: new Date(nascimento).toISOString(),
       sexo,

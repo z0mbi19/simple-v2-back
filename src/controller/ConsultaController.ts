@@ -81,7 +81,7 @@ export async function getDadosForm(req: Request, res: Response) {
 
   let con: Prisma.ConsultaFindManyArgs;
 
-  if (user?.colaboradorId === null) {
+  if (!user?.colaboradorId) {
     con = {
       where: {
         userId: parseInt(req.userId),
